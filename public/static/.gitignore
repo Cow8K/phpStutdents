@@ -1,2 +1,10 @@
 *
 !.gitignore
+
+# 允许 lib 和 js 目录
+!lib/
+!js/
+
+# 允许目录下的所有内容
+!lib/**
+!js/**
