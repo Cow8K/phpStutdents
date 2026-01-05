@@ -2,8 +2,11 @@
 
 namespace app\controller;
 
+use app\Request;
 use think\facade\Db;
 use think\facade\Session;
+use think\exception\ValidateException;
+use app\validate\Admin;
 use app\common\Result;
 use app\common\ResultCode;
 
@@ -46,27 +49,29 @@ class ApiAdmin
         return Result::success($user, '登录成功');
     }
 
-    function addAdmin()
+    public function addAdmin(Request $req)
     {
         $username = input("username");
         $password = input("password");
         $groupId = input("groupId");
 
-        // 1. 基本校验
-        if (strlen($password) < 6) {
-            return Result::error('密码至少 6 位');
+        try {
+            validate(Admin::class)->check($req->param());
+        }
+        catch (ValidateException $e) {
+            return Result::error($e->getError());
         }
 
-        // 2. 判断用户是否存在
+        // 判断用户是否存在
         $user = Db::table('admin')->where('username', $username)->findOrEmpty();
         if (!empty($user)) {
             return Result::error("用户 {$username} 已存在");
         }
 
-        // 3. 加密密码
+        // 加密密码
         $hash = password_hash($password, PASSWORD_DEFAULT);
 
-        // 4. 入库
+        // 入库
         $res = Db::table('admin')->insert([
             'username' => $username,
             'password' => $hash,
