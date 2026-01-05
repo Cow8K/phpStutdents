@@ -3,6 +3,7 @@
 namespace app\controller;
 
 use app\BaseController;
+use think\facade\Db;
 use think\facade\Session;
 
 class Admin extends BaseController
@@ -14,7 +15,24 @@ class Admin extends BaseController
             return '请先登录';
         }
 
-        return "Admin index";
+        $pageData = [
+            'userInfo' => $userInfo,
+            'active' => 1
+        ];
+
+        return view('user_center', $pageData);
+    }
+
+    public function admin_manage()
+    {
+        $adminGroups = Db::table('admin_group')->where('name', '!=', '超级管理员')->select();
+
+        $pageData = [
+            'active' => 2,
+            'adminGroups' => $adminGroups
+        ];
+
+        return view('admin_manage', $pageData);
     }
 
     public function login()

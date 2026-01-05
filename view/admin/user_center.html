@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>用户中心</title>
+    <style>
+        body {
+            background: #f5f5f5;
+            font-size: 13px;
+        }
+
+        ul, li {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .main-box {
+            width: 1200px;
+            display: flex;
+            justify-content: flex-start;
+            margin: 0 auto;
+        }
+
+        .side {
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-right: 20px;
+            border-radius: 5px;
+        }
+
+        .side li {
+            margin: 10px 0;
+        }
+
+        .username {
+            font-size: 30px;
+            font-weight: bold;
+        }
+
+        .active {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="main-box">
+        <div class="side">
+            <ul>
+                <li>管理员管理</li>
+                {if $active == 1}
+                    <li class="active">个人信息</li>
+                {else/}
+                    <li>个人信息</li>
+                {/if}
+                <li>学生信息</li>
+                <li>班级信息</li>
+                <li>课程管理</li>
+                <li>退出</li>
+            </ul>
+        </div>
+        <div class="con-box">
+            <div class="userinfo">
+                <div class="username">
+                    {$userInfo.username}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

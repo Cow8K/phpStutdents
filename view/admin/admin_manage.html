@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>管理员管理</title>
+    <style>
+        body {
+            background: #f5f5f5;
+            font-size: 13px;
+        }
+
+        ul, li {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .main-box {
+            width: 1200px;
+            display: flex;
+            justify-content: flex-start;
+            margin: 0 auto;
+        }
+
+        .side {
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            margin-right: 20px;
+            border-radius: 5px;
+        }
+
+        .side li {
+            margin: 10px 0;
+        }
+
+        .active {
+            font-weight: bold;
+        }
+    </style>
+    <script src="/static/lib/layui/layui.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="main-box">
+        <div class="side">
+            <ul>
+                {if $active == 2}
+                    <li class="active">管理员管理</li>
+                {else/}
+                    <li>管理员管理</li>
+                {/if}
+                <li>个人信息</li>
+                <li>学生信息</li>
+                <li>班级信息</li>
+                <li>课程管理</li>
+                <li>退出</li>
+            </ul>
+        </div>
+        <div class="con-box">
+            <div>
+                <button id="addAdmin">添加管理员</button>
+            </div>
+            <div class="add-box">
+                <div class="line">
+                    <span>账号：</span><input type="text" name="username">
+                </div>
+                <div class="line">
+                    <span>密码：</span><input type="password" name="password">
+                </div>
+                <div class="line">
+                    角色组：
+                    <select name="groupId" id="groupId">
+                        <option value="">请选择</option>
+                        {foreach $adminGroups as $group}
+                        <option value="{$group.id}">{$group.name}</option>
+                        {/foreach}
+                    </select>
+                </div>
+                <div class="line">
+                    <button id="saveBtn">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    layui.use('jquery', function (){
+        let $ = layui.jquery;
+
+
+        $("[id='saveBtn']").click(function (){
+            $.ajax({
+                type: 'post',
+                url: '/apiAdmin/addAdmin',
+                data: {
+                    username: $("[name='username']").val(),
+                    password: $("[name='password']").val(),
+                    groupId: $("[name='groupId']").val(),
+                },
+                dataType: 'json',
+                success(res) {
+
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

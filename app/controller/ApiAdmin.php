@@ -46,4 +46,34 @@ class ApiAdmin
         return Result::success($user, '登录成功');
     }
 
+    function addAdmin()
+    {
+        $username = input("username");
+        $password = input("password");
+        $groupId = input("groupId");
+
+        // 1. 基本校验
+        if (strlen($password) < 6) {
+            return Result::error('密码至少 6 位');
+        }
+
+        // 2. 判断用户是否存在
+        $user = Db::table('admin_user')->where('username', $username)->findOrEmpty();
+        if (!empty($user)) {
+            return Result::error("用户 {$username} 已存在");
+        }
+
+        // 3. 加密密码
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+
+        // 4. 入库
+        $res = Db::table('admin_user')->insert([
+            'username' => $username,
+            'password' => $hash,
+            'group_id' => $groupId,
+        ]);
+
+        return $res === 1 ? Result::success($res, '注册成功') : Result::error('注册失败');
+    }
+
 }
