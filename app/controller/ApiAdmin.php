@@ -3,6 +3,7 @@
 namespace app\controller;
 
 use think\facade\Db;
+use think\facade\Session;
 use app\common\Result;
 use app\common\ResultCode;
 
@@ -19,7 +20,7 @@ class ApiAdmin
         }
 
         // 查询用户
-        $user = Db::table('tp_user')
+        $user = Db::table('admin_user')
             ->where('username', $username)
             ->findOrEmpty();
 
@@ -27,6 +28,17 @@ class ApiAdmin
         if (empty($user) || !password_verify($password, $user['password'])) {
             return Result::error('用户名或密码错误', ResultCode::ERROR);
         }
+
+        $userId = $user['id'];
+        Db::table('admin_log')->insert([
+            'remark' => "管理员 {$username} 登陆",
+            'admin_id' => $userId,
+        ]);
+
+        Session::set('userInfo', [
+            'id' => $userId,
+            'username' => $username,
+        ]);
 
         // 登录成功
         unset($user['password']);

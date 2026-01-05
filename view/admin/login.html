@@ -6,24 +6,91 @@
     <style>
         .con-box {
             width: 400px;
-            height: 300px;
+            height: 260px;
             padding: 30px;
             border: 1px solid #ddd;
-            margin: 30px auto;
+            margin: 50px auto;
+            border-radius: 20px;
         }
+
+        .line {
+            margin: 10px 0;
+        }
+
+        .line span {
+            width: 100px;
+            text-align: right;
+            display: inline-block;
+        }
+
+        .line input {
+            border: 1px solid #ddd;
+        }
+
+        .line input[type="submit"] {
+            border: 1px solid #ddd;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-left: 50px;
+        }
+
     </style>
+    <link href="/static/lib/layui/css/layui.css" rel="stylesheet">
+    <script src="/static/lib/layui/layui.js"></script>
 </head>
 <body>
 <div>
     <div class="con-box">
+        <h1 style="text-align: center; margin-bottom: 30px;">
+            管理员登录
+        </h1>
         <form action="/apiadmin/login" method="post">
-            账号：<input type="text" name="username">
+            <div class="line">
+                <span>账号：</span><input type="text" name="username">
+            </div>
+            <div class="line">
+                <span>密码：</span><input type="password" name="password">
+            </div>
             <br>
-            密码：<input type="password" name="password">
-            <br>
-            <input type="submit" name="提交">
+            <div class="line">
+                <input type="submit" name="提交">
+            </div>
         </form>
     </div>
+
+    <script>
+        const FAIL = 2;
+        const SUCCESS = 6;
+        const SUCCESS_CODE = 0;
+
+        layui.use('jquery', function (){
+            let $ = layui.jquery;
+
+            $("[type='submit']").click(function (){
+                $.ajax({
+                    type: 'post',
+                    url: '/apiAdmin/login',
+                    data: {
+                        username: $("[name='username']").val(),
+                        password: $("[name='password']").val(),
+                    },
+                    dataType: 'json',
+                    xhrFields: { withCredentials: true },
+                    success(res) {
+                        if (res.code === SUCCESS_CODE) {
+                            layer.msg(res['msg'], {icon: SUCCESS});
+                            location.href = './index';
+                        }
+                        else {
+                            layer.msg(res['msg'], {icon: FAIL});
+                        }
+                    }
+                });
+
+                return false;
+            });
+        });
+    </script>
 </div>
 </body>
 </html>
