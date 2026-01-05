@@ -23,7 +23,7 @@ class Admin extends BaseController
         return view('user_center', $pageData);
     }
 
-    public function admin_manage()
+    public function adminManage()
     {
         $adminGroups = Db::table('admin_group')->where('name', '!=', '超级管理员')->select();
 

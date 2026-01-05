@@ -20,7 +20,7 @@ class ApiAdmin
         }
 
         // 查询用户
-        $user = Db::table('admin_user')
+        $user = Db::table('admin')
             ->where('username', $username)
             ->findOrEmpty();
 
@@ -58,7 +58,7 @@ class ApiAdmin
         }
 
         // 2. 判断用户是否存在
-        $user = Db::table('admin_user')->where('username', $username)->findOrEmpty();
+        $user = Db::table('admin')->where('username', $username)->findOrEmpty();
         if (!empty($user)) {
             return Result::error("用户 {$username} 已存在");
         }
@@ -67,7 +67,7 @@ class ApiAdmin
         $hash = password_hash($password, PASSWORD_DEFAULT);
 
         // 4. 入库
-        $res = Db::table('admin_user')->insert([
+        $res = Db::table('admin')->insert([
             'username' => $username,
             'password' => $hash,
             'group_id' => $groupId,
