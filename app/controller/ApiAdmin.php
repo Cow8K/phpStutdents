@@ -100,6 +100,27 @@ class ApiAdmin
         return Result::success(null, '删除成功');
     }
 
+    public function updateAdmin(Request $req)
+    {
+        $id = $req->param('id/d');
+        $data = $req->only(['id', 'username', 'groupId']);
+
+        if (!$id) {
+            return Result::error('参数错误');
+        }
+
+        $admin = AdminModel::find($id);
+        if (!$admin) {
+            return Result::error('数据不存在');
+        }
+
+        $admin->username = $data['username'];
+        $admin->group_id = $data['groupId'];
+
+        $res = $admin->save();
+        return $res ? Result::success(null, '修改成功') : Result::error();
+    }
+
     public function adminList()
     {
         $db = new AdminModel();
