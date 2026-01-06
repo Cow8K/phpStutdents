@@ -64,24 +64,41 @@
                 <table class="layui-hide" id="adminList"></table>
             </div>
             <div id="addBox" class="add-box" style="display: none;">
-                <div class="line">
-                    <span>账号：</span><input type="text" name="username">
-                </div>
-                <div class="line">
-                    <span>密码：</span><input type="password" name="password">
-                </div>
-                <div class="line">
-                    角色组：
-                    <select name="groupId" id="groupId">
-                        <option value="">请选择</option>
-                        {foreach $adminGroups as $group}
-                        <option value="{$group.id}">{$group.name}</option>
-                        {/foreach}
-                    </select>
-                </div>
-                <div class="line">
-                    <button id="saveBtn">保存</button>
-                </div>
+                <form class="layui-form" action="" lay-filter="demo-val-filter">
+                    <input type="hidden" name="id">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-inline layui-input-wrap">
+                            <input type="text" name="username" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">密码</label>
+                        <div class="layui-input-inline layui-input-wrap">
+                            <input type="text" name="password" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+                        </div>
+                    </div>
+
+                    <div class="layui-form-item">
+
+                        <label class="layui-form-label">角色组 </label>
+                        <div class="layui-input-inline">
+                            <select name="groupId" lay-verify="required">
+                                <option value="">请选择</option>
+                                {foreach $adminGroups as $group}
+                                <option value="{$group.id}">{$group.name}</option>
+                                {/foreach}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <button type="submit" class="layui-btn" lay-submit lay-filter="saveBtn">立即提交</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -94,8 +111,13 @@
     </div>
 </script>
 <script>
-    layui.use(['jquery', 'table'], function () {
+    const FAIL = 2;
+    const SUCCESS = 6;
+    const SUCCESS_CODE = 0;
+
+    layui.use(['jquery', 'table', 'form'], function () {
         let $ = layui.jquery;
+        let form = layui.form;
         let table = layui.table;
 
         // 创建渲染实例
@@ -122,7 +144,7 @@
             ]]
         });
 
-        // 触发单元格工具事件
+        // 触发操作列按钮
         table.on('tool(adminList)', function (obj) {
             let data = obj.data;
             console.log(data)
@@ -148,10 +170,6 @@
                         },
                         dataType: 'json',
                         success(res) {
-                            const FAIL = 2;
-                            const SUCCESS = 6;
-                            const SUCCESS_CODE = 0;
-
                             layer.msg(res['msg'], {icon: (res.code === SUCCESS_CODE ? SUCCESS : FAIL)});
                             table.reload('adminList');
                         }
@@ -160,29 +178,33 @@
             }
         });
 
-        $("[id='saveBtn']").click(function () {
+        // 提交表单
+        form.on('submit(saveBtn)', function(data){
+            let field = data.field;
             $.ajax({
                 type: 'post',
                 url: '/apiAdmin/addAdmin',
                 data: {
-                    username: $("[name='username']").val(),
-                    password: $("[name='password']").val(),
-                    groupId: $("[name='groupId']").val(),
+                    username: field.username,
+                    password: field.password,
+                    groupId: field.groupId,
                 },
                 dataType: 'json',
                 success(res) {
-
+                    layer.msg(res['msg'], {icon: (res.code === SUCCESS_CODE ? SUCCESS : FAIL)});
+                    layer.closeAll();
+                    table.reload('adminList');
                 }
             });
 
             return false;
         });
 
+        // 添加管理员按钮
         $("[id='addAdmin']").click(function () {
-
             layer.open({
                 type: 1,
-                area: ['500px', '300px'],
+                area: ['400px', '350px'],
                 title: '添加管理员',
                 shade: 0.6,
                 shadeClose: true,
