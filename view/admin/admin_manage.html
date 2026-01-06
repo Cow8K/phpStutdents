@@ -38,6 +38,7 @@
             font-weight: bold;
         }
     </style>
+    <link href="/static/lib/layui/css/layui.css" rel="stylesheet">
     <script src="/static/lib/layui/layui.js"></script>
 </head>
 <body>
@@ -58,6 +59,9 @@
             </ul>
         </div>
         <div class="con-box">
+            <div style="padding: 15px;">
+                <table class="layui-hide" id="adminList"></table>
+            </div>
             <div>
                 <button id="addAdmin">添加管理员</button>
             </div>
@@ -86,8 +90,33 @@
 </div>
 
 <script>
-    layui.use('jquery', function (){
+    layui.use(['jquery', 'table'], function (){
         let $ = layui.jquery;
+        let table = layui.table;
+
+        // 创建渲染实例
+        table.render({
+            elem: '#adminList',
+            url:'/apiAdmin/adminList',
+            height: '315px',
+            page: {
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'],
+                groups: 3,
+                first: false,
+                last: false
+            },
+            limit: 5,
+            cols: [[
+                {type: 'checkbox', fixed: 'left'},
+                // 未自定义模板的普通列
+                {field:'id', fixed: 'left', width:80, title: 'ID', sort: true},
+                // 模板 - 选择器写法
+                {field:'username', width:200, title: '用户'},
+                {field:'score', width:80, title: '积分'},
+                {field:'createTime', width:160, title: '创建时间'},
+                {title: '其他', minWidth:200}
+            ]]
+        });
 
 
         $("[id='saveBtn']").click(function (){

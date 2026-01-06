@@ -6,7 +6,8 @@ use app\Request;
 use think\facade\Db;
 use think\facade\Session;
 use think\exception\ValidateException;
-use app\validate\Admin;
+use app\model\Admin as AdminModel;
+use app\validate\Admin as AdminValidate;
 use app\common\Result;
 use app\common\ResultCode;
 
@@ -56,14 +57,14 @@ class ApiAdmin
         $groupId = input("groupId");
 
         try {
-            validate(Admin::class)->check($req->param());
+            validate(AdminValidate::class)->check($req->param());
         }
         catch (ValidateException $e) {
             return Result::error($e->getError());
         }
 
         // 判断用户是否存在
-        $user = Db::table('admin')->where('username', $username)->findOrEmpty();
+        $user = AdminModel::where('username', $username)->find();
         if (!empty($user)) {
             return Result::error("用户 {$username} 已存在");
         }
@@ -72,13 +73,31 @@ class ApiAdmin
         $hash = password_hash($password, PASSWORD_DEFAULT);
 
         // 入库
-        $res = Db::table('admin')->insert([
+        $res = AdminModel::insert([
             'username' => $username,
             'password' => $hash,
             'group_id' => $groupId,
         ]);
 
         return $res === 1 ? Result::success($res, '注册成功') : Result::error('注册失败');
+    }
+
+    public function adminList()
+    {
+        $db = new AdminModel();
+        $where = [];
+        $page = input("page", 1);
+        $limit = input("limit", 10);
+
+        $adminList = $db->where($where)
+            ->field(['id, username, group_id, score, create_time'])
+            ->order('create_time desc')
+            ->page($page, $limit)
+            ->select();
+
+        $count = $db->where($where)->count();
+
+        return Result::page($adminList, $count);
     }
 
 }

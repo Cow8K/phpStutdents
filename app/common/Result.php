@@ -21,4 +21,14 @@ class Result
             'data' => $data,
         ]);
     }
+
+    public static function page($data = null, $count = null, string $msg = 'success', int $code = 0)
+    {
+        return json([
+            'code' => $code,
+            'count' => $count,
+            'msg'  => $msg,
+            'data' => $data,
+        ]);
+    }
 }
