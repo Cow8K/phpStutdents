@@ -82,6 +82,24 @@ class ApiAdmin
         return $res === 1 ? Result::success($res, '注册成功') : Result::error('注册失败');
     }
 
+    public function deleteAdmin()
+    {
+        $id = input('id');
+
+        if (!$id) {
+            return Result::error('参数错误');
+        }
+
+        $admin = AdminModel::find($id);
+        if (!$admin) {
+            return Result::error('数据不存在');
+        }
+
+        $admin->delete();
+
+        return Result::success(null, '删除成功');
+    }
+
     public function adminList()
     {
         $db = new AdminModel();

@@ -60,12 +60,10 @@
         </div>
         <div class="con-box">
             <div style="padding: 15px;">
+                <button id="addAdmin" type="button" class="layui-btn layui-btn-sm layui-btn-normal" style="margin-bottom: 4px">添加管理员</button>
                 <table class="layui-hide" id="adminList"></table>
             </div>
-            <div>
-                <button id="addAdmin">添加管理员</button>
-            </div>
-            <div class="add-box">
+            <div id="addBox" class="add-box" style="display: none;">
                 <div class="line">
                     <span>账号：</span><input type="text" name="username">
                 </div>
@@ -89,15 +87,21 @@
     </div>
 </div>
 
+<script type="text/html" id="operation">
+    <div class="layui-clear-space">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+        <a class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
+    </div>
+</script>
 <script>
-    layui.use(['jquery', 'table'], function (){
+    layui.use(['jquery', 'table'], function () {
         let $ = layui.jquery;
         let table = layui.table;
 
         // 创建渲染实例
         table.render({
             elem: '#adminList',
-            url:'/apiAdmin/adminList',
+            url: '/apiAdmin/adminList',
             height: '315px',
             page: {
                 layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'],
@@ -109,17 +113,54 @@
             cols: [[
                 {type: 'checkbox', fixed: 'left'},
                 // 未自定义模板的普通列
-                {field:'id', fixed: 'left', width:80, title: 'ID', sort: true},
+                {field: 'id', fixed: 'left', width: 80, title: 'ID', sort: true},
                 // 模板 - 选择器写法
-                {field:'username', width:200, title: '用户'},
-                {field:'score', width:80, title: '积分'},
-                {field:'createTime', width:160, title: '创建时间'},
-                {title: '其他', minWidth:200}
+                {field: 'username', width: 200, title: '用户'},
+                {field: 'score', width: 80, title: '积分'},
+                {field: 'createTime', width: 160, title: '创建时间'},
+                {title: '操作', minWidth: 200, templet: '#operation'}
             ]]
         });
 
+        // 触发单元格工具事件
+        table.on('tool(adminList)', function (obj) {
+            let data = obj.data;
+            console.log(data)
 
-        $("[id='saveBtn']").click(function (){
+            if (obj.event === 'edit') {
+                layer.open({
+                    title: '编辑 - id:' + data.id,
+                    type: 1,
+                    area: ['80%', '80%'],
+                    content: '<div style="padding: 16px;">自定义表单元素</div>'
+                });
+            }
+            else if (obj.event === 'delete') {
+                layer.confirm('确认删除此条数据吗？', {btn: ['确定', '关闭']}, function (index) {
+                    layer.close(index);
+
+                    // 点击确认，调用删除接口
+                    $.ajax({
+                        type: 'post',
+                        url: '/apiAdmin/deleteAdmin',
+                        data: {
+                            id: data.id
+                        },
+                        dataType: 'json',
+                        success(res) {
+                            const FAIL = 2;
+                            const SUCCESS = 6;
+                            const SUCCESS_CODE = 0;
+
+                            layer.msg(res['msg'], {icon: (res.code === SUCCESS_CODE ? SUCCESS : FAIL)});
+                            table.reload('adminList');
+                        }
+                    });
+                });
+            }
+        });
+
+        $("[id='saveBtn']").click(function () {
             $.ajax({
                 type: 'post',
                 url: '/apiAdmin/addAdmin',
@@ -135,6 +176,18 @@
             });
 
             return false;
+        });
+
+        $("[id='addAdmin']").click(function () {
+
+            layer.open({
+                type: 1,
+                area: ['500px', '300px'],
+                title: '添加管理员',
+                shade: 0.6,
+                shadeClose: true,
+                content: $('#addBox')
+            });
         });
     });
 </script>
