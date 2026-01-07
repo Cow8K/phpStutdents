@@ -1,109 +1,52 @@
-<!doctype html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <title>管理员管理</title>
-    <style>
-        body {
-            background: #f5f5f5;
-            font-size: 13px;
-        }
+{extend name="common\base"/}
+{block name="title"}{$title}{/block}
 
-        ul, li {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .main-box {
-            width: 1200px;
-            display: flex;
-            justify-content: flex-start;
-            margin: 0 auto;
-        }
-
-        .side {
-            background: #fff;
-            padding: 15px;
-            border: 1px solid #ddd;
-            margin-right: 20px;
-            border-radius: 5px;
-        }
-
-        .side li {
-            margin: 10px 0;
-        }
-
-        .active {
-            font-weight: bold;
-        }
-    </style>
-    <link href="/static/lib/layui/css/layui.css" rel="stylesheet">
-    <script src="/static/lib/layui/layui.js"></script>
-</head>
-<body>
-<div class="container">
-    <div class="main-box">
-        <div class="side">
-            <ul>
-                {if $active == 2}
-                    <li class="active">管理员管理</li>
-                {else/}
-                    <li>管理员管理</li>
-                {/if}
-                <li>个人信息</li>
-                <li>学生信息</li>
-                <li>班级信息</li>
-                <li>课程管理</li>
-                <li>退出</li>
-            </ul>
-        </div>
-        <div class="con-box">
-            <div style="padding: 15px;">
-                <button id="addAdmin" type="button" class="layui-btn layui-btn-sm layui-btn-normal" style="margin-bottom: 4px">添加管理员</button>
-                <table class="layui-hide" id="adminList"></table>
-            </div>
-            <div id="addBox" class="add-box" style="display: none;">
-                <form class="layui-form" action="" lay-filter="adminForm">
-                    <input type="hidden" name="id">
-                    <div class="layui-form-item">
-                        <label class="layui-form-label">用户名</label>
-                        <div class="layui-input-inline layui-input-wrap">
-                            <input type="text" name="username" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
-                        </div>
-                    </div>
-
-                    <div class="layui-form-item" id="passwordBox">
-                        <label class="layui-form-label">密码</label>
-                        <div class="layui-input-inline layui-input-wrap">
-                            <input type="text" name="password" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
-                        </div>
-                    </div>
-
-                    <div class="layui-form-item">
-
-                        <label class="layui-form-label">角色组 </label>
-                        <div class="layui-input-inline">
-                            <select name="groupId" lay-verify="required">
-                                <option value="">请选择</option>
-                                {foreach $adminGroups as $group}
-                                <option value="{$group.id}">{$group.name}</option>
-                                {/foreach}
-                            </select>
-                        </div>
-                    </div>
-                    <div class="layui-form-item">
-                        <div class="layui-input-block">
-                            <button type="submit" class="layui-btn" lay-submit lay-filter="saveBtn">提交</button>
-                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
+{block name="main"}
+<div style="padding: 15px;">
+    <button id="addAdmin" type="button" class="layui-btn layui-btn-sm layui-btn-normal" style="margin-bottom: 4px">添加管理员</button>
+    <table class="layui-hide" id="adminList"></table>
 </div>
+<div id="addBox" class="add-box" style="display: none;">
+    <form class="layui-form" action="" lay-filter="adminForm">
+        <input type="hidden" name="id">
+        <div class="layui-form-item">
+            <label class="layui-form-label">用户名</label>
+            <div class="layui-input-inline layui-input-wrap">
+                <input type="text" name="username" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+            </div>
+        </div>
 
+        <div class="layui-form-item" id="passwordBox">
+            <label class="layui-form-label">密码</label>
+            <div class="layui-input-inline layui-input-wrap">
+                <input type="text" name="password" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+
+            <label class="layui-form-label">角色组 </label>
+            <div class="layui-input-inline">
+                <select name="groupId" lay-verify="required">
+                    <option value="">请选择</option>
+                    {foreach $adminGroups as $group}
+                    <option value="{$group.id}">{$group.name}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit lay-filter="saveBtn">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+
+
+{block name="javascript"}
 <script type="text/html" id="operation">
     <div class="layui-clear-space">
         <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
@@ -239,5 +182,4 @@
         });
     });
 </script>
-</body>
-</html>
+{/block}
