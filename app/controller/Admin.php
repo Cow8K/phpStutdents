@@ -8,9 +8,13 @@ use think\facade\Db;
 use think\facade\View;
 use think\facade\Request;
 use think\facade\Session;
+use app\middleware\CheckLogin;
 
 class Admin extends BaseController
 {
+    protected $middleware = [
+        CheckLogin::class => ['except' => 'login']
+    ];
     public function __construct(App $app)
     {
         parent::__construct($app);
@@ -30,13 +34,8 @@ class Admin extends BaseController
 
     public function index()
     {
-        $userInfo = Session::get('userInfo');
-        if (is_null($userInfo)) {
-            return '请先登录';
-        }
-
         $pageData = [
-            'userInfo' => $userInfo,
+            'userInfo' => Session::get('userInfo'),
             'title' => '用户中心'
         ];
 
