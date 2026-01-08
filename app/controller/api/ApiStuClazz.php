@@ -1,12 +1,12 @@
 <?php
 
-namespace app\controller;
+namespace app\controller\api;
 
 use app\Request;
 use think\facade\Db;
 use app\common\Result;
 
-class apiStuClazz
+class ApiStuClazz
 {
     public function addClazz(Request $req)
     {
@@ -26,7 +26,7 @@ class apiStuClazz
         return $res === 1 ? Result::success($res, '添加成功') : Result::error('添加成功');
     }
 
-    public function deleteClass()
+    public function deleteClazz()
     {
         $id = input('id');
 

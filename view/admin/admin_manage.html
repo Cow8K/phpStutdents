@@ -83,7 +83,7 @@
         // 创建渲染实例
         table.render({
             elem: '#adminList',
-            url: '/apiAdmin/adminList',
+            url: '/api/admin/adminList',
             height: '315px',
             page: {
                 layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'],
@@ -127,7 +127,7 @@
                     // 点击确认，调用删除接口
                     $.ajax({
                         type: 'post',
-                        url: '/apiAdmin/deleteAdmin',
+                        url: '/api/admin/deleteAdmin',
                         data: {
                             id: data.id
                         },
@@ -168,7 +168,7 @@
 
             $.ajax({
                 type: 'post',
-                url: id ? '/apiAdmin/updateAdmin' : '/apiAdmin/addAdmin',
+                url: id ? '/api/admin/updateAdmin' : '/api/admin/addAdmin',
                 data: {id, username, password, groupId},
                 dataType: 'json',
                 success(res) {

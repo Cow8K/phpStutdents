@@ -1,6 +1,6 @@
 <?php
 
-namespace app\controller;
+namespace app\controller\api;
 
 use app\Request;
 use think\facade\Db;

@@ -1,6 +1,6 @@
 <?php
 
-namespace app\controller;
+namespace app\controller\web;
 
 use app\BaseController;
 use think\facade\Db;
@@ -20,7 +20,7 @@ class Admin extends BaseController
             'title' => '用户中心'
         ];
 
-        return view('user_center', $pageData);
+        return view('admin\user_center', $pageData);
     }
 
     public function adminManage()
@@ -32,11 +32,11 @@ class Admin extends BaseController
             'title' => '管理员管理'
         ];
 
-        return view('admin_manage', $pageData);
+        return view('admin\admin_manage', $pageData);
     }
 
     public function login()
     {
-        return view();
+        return view('admin\login');
     }
 }

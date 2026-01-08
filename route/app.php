@@ -15,3 +15,34 @@ Route::get('think', function () {
 });
 
 Route::get('hello/:name', 'index/hello');
+
+/**
+ * 后台页面
+ */
+Route::group('admin', function () {
+    Route::get('index', 'web.Admin/index');
+    Route::get('login', 'web.Admin/login');
+    Route::get('adminManage', 'web.Admin/adminManage');
+
+    Route::get('', 'web.StuClazz/clazzManage');
+});
+
+Route::group('stuClazz', function () {
+    Route::get('clazzManage', 'web.StuClazz/clazzManage');
+});
+
+/**
+ * 接口
+ */
+Route::group('api', function () {
+    Route::get('admin/adminList', 'api.ApiAdmin/adminList');
+    Route::post('admin/login', 'api.ApiAdmin/login');
+    Route::post('admin/addAdmin', 'api.ApiAdmin/addAdmin');
+    Route::post('admin/deleteAdmin', 'api.ApiAdmin/deleteAdmin');
+    Route::post('admin/updateAdmin', 'api.ApiAdmin/updateAdmin');
+
+    Route::get('clazz/clazzList', 'api.ApiStuClazz/clazzList');
+    Route::post('clazz/addClazz', 'api.ApiStuClazz/addClazz');
+    Route::post('clazz/deleteClazz', 'api.ApiStuClazz/deleteClazz');
+    Route::post('clazz/updateClazz', 'api.ApiStuClazz/updateClazz');
+});

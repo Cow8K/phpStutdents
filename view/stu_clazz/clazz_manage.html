@@ -71,7 +71,7 @@
         // 创建渲染实例
         table.render({
             elem: '#clazzList',
-            url: '/apiStuClazz/clazzList',
+            url: '/api/clazz/clazzList',
             height: '315px',
             page: {
                 layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'],
@@ -110,7 +110,7 @@
                     // 点击确认，调用删除接口
                     $.ajax({
                         type: 'post',
-                        url: '/apiStuClazz/deleteClazz',
+                        url: '/api/clazz/deleteClazz',
                         data: {
                             id: data.id
                         },
@@ -144,7 +144,7 @@
 
             $.ajax({
                 type: 'post',
-                url: id ? '/apiStuClazz/updateClazz' : '/apiStuClazz/addClazz',
+                url: id ? '/api/clazz/updateClazz' : '/api/clazz/addClazz',
                 data: {id, title, grade},
                 dataType: 'json',
                 success(res) {

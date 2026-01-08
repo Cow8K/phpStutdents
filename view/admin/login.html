@@ -69,7 +69,7 @@
             $("[type='submit']").click(function (){
                 $.ajax({
                     type: 'post',
-                    url: '/apiAdmin/login',
+                    url: '/api/admin/login',
                     data: {
                         username: $("[name='username']").val(),
                         password: $("[name='password']").val(),

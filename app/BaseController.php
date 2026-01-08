@@ -61,8 +61,9 @@ abstract class BaseController
             "/stuClazz/clazzManage" => "班级管理",
         ];
 
-        $controller = lcfirst(Request::controller());
-        $actionName = '/' . $controller . '/' . Request::action();
+
+        $controllerShortName = substr(strrchr(Request::controller(), '.'), 1);
+        $actionName = '/' . lcfirst($controllerShortName) . '/' . Request::action();
 
         View::assign([
             'menus' => $menus,
