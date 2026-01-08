@@ -3,10 +3,7 @@
 namespace app\controller;
 
 use app\BaseController;
-use think\App;
 use think\facade\Db;
-use think\facade\View;
-use think\facade\Request;
 use think\facade\Session;
 use app\middleware\CheckLogin;
 
@@ -15,22 +12,6 @@ class Admin extends BaseController
     protected $middleware = [
         CheckLogin::class => ['except' => 'login']
     ];
-    public function __construct(App $app)
-    {
-        parent::__construct($app);
-
-        $menus = [
-            "/admin/index" => "用户管理",
-            "/admin/adminManage" => "管理员管理"
-        ];
-
-        $actionName = '/' . Request::controller(true) . '/' . Request::action();
-
-        View::assign([
-            "menus" => $menus,
-            "actionName" => $actionName
-        ]);
-    }
 
     public function index()
     {

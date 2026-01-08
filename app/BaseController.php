@@ -4,6 +4,8 @@ declare (strict_types = 1);
 namespace app;
 
 use think\App;
+use think\facade\View;
+use think\facade\Request;
 use think\exception\ValidateException;
 use think\Validate;
 
@@ -52,7 +54,21 @@ abstract class BaseController
 
     // 初始化
     protected function initialize()
-    {}
+    {
+        $menus = [
+            "/admin/index" => "用户管理",
+            "/admin/adminManage" => "管理员管理",
+            "/stuClazz/clazzManage" => "班级管理",
+        ];
+
+        $controller = lcfirst(Request::controller());
+        $actionName = '/' . $controller . '/' . Request::action();
+
+        View::assign([
+            'menus' => $menus,
+            'actionName' => $actionName,
+        ]);
+    }
 
     /**
      * 验证数据

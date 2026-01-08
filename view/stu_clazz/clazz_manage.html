@@ -1,0 +1,165 @@
+{extend name="common\base"/}
+{block name="title"}{$title}{/block}
+
+{block name="main"}
+<div style="padding: 15px;">
+    <button id="addClazz" type="button" class="layui-btn layui-btn-sm layui-btn-normal" style="margin-bottom: 4px">添加班级</button>
+    <table class="layui-hide" id="clazzList"></table>
+</div>
+<div id="addBox" class="add-box" style="display: none;">
+    <form class="layui-form" action="" lay-filter="clazzForm">
+        <input type="hidden" name="id">
+        <div class="layui-form-item">
+            <label class="layui-form-label">班级名称</label>
+            <div class="layui-input-inline layui-input-wrap">
+                <input type="text" name="title" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+            </div>
+        </div>
+
+        <div class="layui-form-item">
+
+            <label class="layui-form-label">年级</label>
+            <div class="layui-input-inline">
+                <select name="grade" lay-verify="required">
+                    <option value="">请选择</option>
+                    {foreach $classList as $clazz}
+                    <option value="{$clazz}">{$clazz}</option>
+                    {/foreach}
+                </select>
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <div class="layui-input-block">
+                <button type="submit" class="layui-btn" lay-submit lay-filter="saveBtn">提交</button>
+                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+            </div>
+        </div>
+    </form>
+</div>
+{/block}
+
+
+{block name="javascript"}
+<script type="text/html" id="operation">
+    <div class="layui-clear-space">
+        <a class="layui-btn layui-btn-xs" lay-event="edit">修改</a>
+        <a class="layui-btn layui-btn-xs" lay-event="delete">删除</a>
+    </div>
+</script>
+<script>
+    const FAIL = 2;
+    const SUCCESS = 6;
+    const SUCCESS_CODE = 0;
+
+    // 打开修改或添加班级弹窗
+    function openClazzDialog(title, ele) {
+        layer.open({
+            type: 1,
+            area: ['400px', '350px'],
+            title: title,
+            shade: 0.6,
+            shadeClose: true,
+            content: ele
+        });
+    }
+
+    layui.use(['jquery', 'table', 'form'], function () {
+        let $ = layui.jquery;
+        let form = layui.form;
+        let table = layui.table;
+
+        // 创建渲染实例
+        table.render({
+            elem: '#clazzList',
+            url: '/apiStuClazz/clazzList',
+            height: '315px',
+            page: {
+                layout: ['limit', 'count', 'prev', 'page', 'next', 'skip'],
+                groups: 3,
+                first: false,
+                last: false
+            },
+            limit: 5,
+            cols: [[
+                {type: 'checkbox', fixed: 'left'},
+                {field: 'id', fixed: 'left', width: 80, title: 'ID', sort: true},
+                {field: 'title', width: 160, title: '班级'},
+                {field: 'grade', width: 80, title: '年级'},
+                {field: 'createTime', width: 160, title: '创建时间'},
+                {title: '操作', minWidth: 200, templet: '#operation'}
+            ]]
+        });
+
+        // 触发操作列按钮
+        table.on('tool(clazzList)', function (obj) {
+            let data = obj.data;
+
+            if (obj.event === 'edit') {
+                form.val('clazzForm', {
+                    id: data.id,
+                    title: data.title,
+                    grade: data.grade,
+                });
+
+                openClazzDialog('编辑班级', $('#addBox'));
+            }
+            else if (obj.event === 'delete') {
+                layer.confirm('确认删除此条数据吗？', {btn: ['确定', '关闭']}, function (index) {
+                    layer.close(index);
+
+                    // 点击确认，调用删除接口
+                    $.ajax({
+                        type: 'post',
+                        url: '/apiStuClazz/deleteClazz',
+                        data: {
+                            id: data.id
+                        },
+                        dataType: 'json',
+                        success(res) {
+                            layer.msg(res['msg'], {icon: (res.code === SUCCESS_CODE ? SUCCESS : FAIL)});
+                            table.reload('clazzList');
+                        }
+                    });
+                });
+            }
+        });
+
+        // 添加班级按钮
+        $("[id='addClazz']").click(function () {
+            form.val('clazzForm', {
+                id: null,
+                title: null,
+                grade: null,
+            });
+
+            openClazzDialog('添加班级', $('#addBox'));
+        });
+
+        // 提交表单
+        form.on('submit(saveBtn)', function(data){
+            let field = data.field;
+            let id = field.id;
+            let title = field.title;
+            let grade = field.grade;
+
+            $.ajax({
+                type: 'post',
+                url: id ? '/apiStuClazz/updateClazz' : '/apiStuClazz/addClazz',
+                data: {id, title, grade},
+                dataType: 'json',
+                success(res) {
+                    if (res.code === 0) {
+                        layer.msg(res['msg'], {icon: SUCCESS});
+                        layer.closeAll();
+                        table.reload('clazzList');
+                        return;
+                    }
+                    layer.msg(res['msg'], {icon: FAIL});
+                }
+            });
+
+            return false;
+        });
+    });
+</script>
+{/block}
