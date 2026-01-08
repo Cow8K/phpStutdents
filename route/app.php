@@ -31,6 +31,10 @@ Route::group('stuClazz', function () {
     Route::get('clazzManage', 'web.StuClazz/clazzManage');
 });
 
+Route::group('student', function () {
+    Route::get('studentManage', 'web.Student/studentManage');
+});
+
 /**
  * 接口
  */
@@ -45,4 +49,9 @@ Route::group('api', function () {
     Route::post('clazz/addClazz', 'api.ApiStuClazz/addClazz');
     Route::post('clazz/deleteClazz', 'api.ApiStuClazz/deleteClazz');
     Route::post('clazz/updateClazz', 'api.ApiStuClazz/updateClazz');
+
+    Route::get('student/studentList', 'api.ApiStudent/studentList');
+    Route::post('student/addStudent', 'api.ApiStudent/addStudent');
+    Route::post('student/deleteStudent', 'api.ApiStudent/deleteStudent');
+    Route::post('student/updateStudent', 'api.ApiStudent/updateStudent');
 });
