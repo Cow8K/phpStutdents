@@ -4,6 +4,7 @@ namespace app\controller\web;
 
 use app\BaseController;
 use think\facade\Db;
+use think\facade\Event;
 use think\facade\Session;
 use app\middleware\CheckLogin;
 
@@ -43,6 +44,7 @@ class Admin extends BaseController
 
     public function logout()
     {
+        Event::trigger("Logout", Session::get('userInfo'));
         Session::delete('userInfo');
 
         $refer = request()->header()["referer"];

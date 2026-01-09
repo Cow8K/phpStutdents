@@ -13,5 +13,6 @@ return [
     ],
 
     'subscribe' => [
+        app\subscribe\OperationLogSubscriber::class
     ],
 ];

@@ -4,6 +4,7 @@ namespace app\controller\api;
 
 use app\middleware\CheckLogin;
 use app\Request;
+use think\facade\Event;
 use think\facade\Db;
 use think\facade\Session;
 use think\exception\ValidateException;
@@ -39,10 +40,7 @@ class ApiAdmin
         }
 
         $userId = $user['id'];
-        Db::table('admin_log')->insert([
-            'remark' => "管理员 {$username} 登陆",
-            'admin_id' => $userId,
-        ]);
+        Event::trigger("Login", $user);
 
         Session::set('userInfo', [
             'id' => $userId,
