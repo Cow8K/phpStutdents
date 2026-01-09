@@ -22,6 +22,7 @@ Route::get('hello/:name', 'index/hello');
 Route::group('admin', function () {
     Route::get('index', 'web.Admin/index');
     Route::get('login', 'web.Admin/login');
+    Route::get('logout', 'web.Admin/logout');
     Route::get('adminManage', 'web.Admin/adminManage');
 
     Route::get('', 'web.StuClazz/clazzManage');

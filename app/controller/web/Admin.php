@@ -37,6 +37,17 @@ class Admin extends BaseController
 
     public function login()
     {
-        return view('admin\login');
+        $redirectUrl = request()->get('redirectUrl', './index');
+        return view('admin\login', ['redirectUrl' => $redirectUrl]);
+    }
+
+    public function logout()
+    {
+        Session::delete('userInfo');
+
+        $refer = request()->header()["referer"];
+        $redirectUrl = str_replace(request()->domain(), "", $refer);
+
+        return redirect((string)url("/admin/login", ["redirectUrl" => $redirectUrl]));
     }
 }
