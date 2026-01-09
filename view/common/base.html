@@ -57,8 +57,10 @@
                             <a href="{$path}" {$actionName == $path ? 'class="active"' : ''} >{$name}</a>
                         </li>
                         {/foreach}
-                        <li>个人信息</li>
                         <li>课程管理</li>
+                        <li>
+                            <a href="javascript:0" class="href" id="modifyPassword">修改密码</a>
+                        </li>
                         <li>
                             <a href="/admin/logout" class="href">退出</a>
                         </li>
@@ -70,6 +72,107 @@
             </div>
         </div>
     </div>
+    <div id="modify-password-box" style="display: none;">
+        <form class="layui-form" action="" lay-filter="modify-password-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">旧密码</label>
+                <div class="layui-input-inline layui-input-wrap">
+                    <input type="text" name="oldPassword" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">新密码</label>
+                <div class="layui-input-inline layui-input-wrap">
+                    <input type="text" name="newPassword" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">确认密码</label>
+                <div class="layui-input-inline layui-input-wrap">
+                    <input type="text" name="confirmPassword" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+                </div>
+            </div>
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit lay-filter="modifyPasswordBtn">确认修改</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {block name="common_script"}
+    <script>
+        const FAIL = 2;
+        const SUCCESS = 6;
+        const SUCCESS_CODE = 0;
+
+        layui.use(function () {
+            let $ = layui.jquery;
+            let form = layui.form;
+
+            // 自定义验证规则
+            form.verify({
+                // 验证密码，且为必填项
+                password: function(value) {
+                    if (!/^\S{6,16}$/.test(value)) {
+                        return '密码必须为 6 到 16 位的非空字符';
+                    }
+                }
+            });
+
+            // 提交表单
+            form.on('submit(modifyPasswordBtn)', function(data){
+                let field = data.field;
+                let oldPassword = field.oldPassword;
+                let newPassword = field.newPassword;
+                let confirmPassword = field.confirmPassword;
+
+                if (newPassword !== confirmPassword) {
+                    layer.alert("两次输入的密码不一致");
+                    return false;
+                }
+
+                $.ajax({
+                    type: 'post',
+                    url: '/api/admin/modifyPassword',
+                    data: {confirmPassword, oldPassword, newPassword},
+                    dataType: 'json',
+                    success(res) {
+                        if (res.code === 0) {
+                            layer.msg(res['msg'], {icon: SUCCESS}, () => {
+                                layer.closeAll();
+
+                                // 修改密码后重新登录
+                                location.href = './index';
+                            });
+                            return;
+                        }
+                        layer.alert(res['msg']);
+                    }
+                });
+
+                return false;
+            });
+
+            $("[id='modifyPassword']").click(function () {
+                layer.open({
+                    type: 1,
+                    area: ['400px', '350px'],
+                    title: '修改密码',
+                    shade: 0.6,
+                    shadeClose: true,
+                    content: $('#modify-password-box')
+                });
+            });
+        });
+
+    </script>
+    {/block}
+
     {block name="javascript"} {/block}
 </body>
 </html>

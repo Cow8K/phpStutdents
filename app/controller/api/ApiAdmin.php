@@ -2,6 +2,7 @@
 
 namespace app\controller\api;
 
+use app\middleware\CheckLogin;
 use app\Request;
 use think\facade\Db;
 use think\facade\Session;
@@ -13,6 +14,10 @@ use app\common\ResultCode;
 
 class ApiAdmin
 {
+    protected $middleware = [
+        CheckLogin::class => ['except' => 'login']
+    ];
+
     public function login()
     {
         $username = input("username");
@@ -139,4 +144,40 @@ class ApiAdmin
         return Result::page($adminList, $count);
     }
 
+    public function modifyPassword()
+    {
+        $confirm = input("confirmPassword");
+        $oldPassword = input("oldPassword");
+        $newPassword = input("newPassword");
+
+        if (!$oldPassword || !$newPassword || !$confirm) {
+            return Result::error('参数不能为空');
+        }
+
+        if ($newPassword !== $confirm) {
+            return Result::error('两次密码不一致');
+        }
+
+        if (strlen($newPassword) < 6) {
+            return Result::error('密码长度不能小于 6 位');
+        }
+
+        $userId = Session::get("userInfo")["id"];
+        $user = AdminModel::find($userId);
+        if (!$user) {
+            return Result::error('用户不存在');
+        }
+
+        if (!password_verify($oldPassword, $user->password)) {
+            return Result::error('旧密码错误');
+        }
+
+        $user->password = password_hash($newPassword, PASSWORD_DEFAULT);
+        $user->save();
+
+        // 清除登录态
+        Session::set('userInfo', null);
+
+        return Result::success(null,"修改密码成功");
+    }
 }
