@@ -78,19 +78,19 @@ class ApiStudent
 
     public function studentList()
     {
-        $where = [];
         $page = input("page", 1);
         $limit = input("limit", 10);
 
-        $studentList = Student::where($where)
-            ->field(['id, stu_number, name, gender, birthday, stu_class_id, create_time'])
-            ->order('create_time desc')
-            ->page($page, $limit)
-            ->select();
+        $res = Student::alias('stu')
+            ->leftJoin('stu_class sc', 'stu.stu_class_id = sc.id')
+            ->order('stu.id', 'desc')
+            ->field('stu.*, sc.grade, sc.title')
+            ->paginate([
+                "list_rows" => $limit,
+                "page"      => $page,
+            ]);
 
-        $count = Db::name('student')->where($where)->count();
-
-        return Result::page($studentList, $count);
+        return Result::page($res->items(), $res->total());
     }
 
 }

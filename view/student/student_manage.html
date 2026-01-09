@@ -109,7 +109,11 @@
                         return d.gender === 1 ? '男' : '女';
                     }
                 },
-                {field: 'classId', width: 160, title: '班级'},
+                {
+                    field: 'classId', width: 160, title: '班级', templet: function (d) {
+                        return d.grade + ' ' + d.title;
+                    }
+                },
                 {field: 'createTime', width: 160, title: '创建时间'},
                 {title: '操作', minWidth: 200, templet: '#operation'}
             ]]
@@ -123,11 +127,13 @@
         // 触发操作列按钮
         table.on('tool(studentList)', function (obj) {
             let data = obj.data;
+            console.log(data)
 
             if (obj.event === 'edit') {
                 form.val('studentForm', {
                     id: data.id,
                     name: data.name,
+                    classId: data.classId,
                     birthday: data.birthday,
                     stuNumber: data.stuNumber,
                     createTime: data.createTime,
@@ -162,6 +168,7 @@
             form.val('studentForm', {
                 id: null,
                 name: null,
+                classId: null,
                 birthday: null,
                 stuNumber: null,
                 createTime: null,
