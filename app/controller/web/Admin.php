@@ -6,12 +6,14 @@ use app\BaseController;
 use think\facade\Db;
 use think\facade\Event;
 use think\facade\Session;
+use app\middleware\Auth;
 use app\middleware\CheckLogin;
 
 class Admin extends BaseController
 {
     protected $middleware = [
-        CheckLogin::class => ['except' => 'login']
+        Auth::class => ['except' => ['login', 'index', 'logout']],
+        CheckLogin::class => ['except' => 'login'],
     ];
 
     public function index()

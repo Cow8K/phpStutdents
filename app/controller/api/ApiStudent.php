@@ -2,12 +2,13 @@
 
 namespace app\controller\api;
 
+use app\BaseController;
 use app\Request;
 use think\facade\Db;
 use app\common\Result;
 use app\model\Student;
 
-class ApiStudent
+class ApiStudent extends BaseController
 {
     public function addStudent(Request $req)
     {

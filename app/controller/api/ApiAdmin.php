@@ -2,6 +2,8 @@
 
 namespace app\controller\api;
 
+use app\BaseController;
+use app\middleware\Auth;
 use app\middleware\CheckLogin;
 use app\Request;
 use think\facade\Event;
@@ -13,10 +15,11 @@ use app\validate\Admin as AdminValidate;
 use app\common\Result;
 use app\common\ResultCode;
 
-class ApiAdmin
+class ApiAdmin extends BaseController
 {
     protected $middleware = [
-        CheckLogin::class => ['except' => 'login']
+        Auth::class => ['except' => ['login', 'index', 'logout']],
+        CheckLogin::class => ['except' => 'login'],
     ];
 
     public function login()
@@ -45,6 +48,7 @@ class ApiAdmin
         Session::set('userInfo', [
             'id' => $userId,
             'username' => $username,
+            'groupId' => $user['group_id'],
         ]);
 
         // 登录成功

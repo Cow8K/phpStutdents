@@ -3,6 +3,8 @@ declare (strict_types = 1);
 
 namespace app;
 
+use app\middleware\Auth;
+use app\middleware\CheckLogin;
 use think\App;
 use think\facade\View;
 use think\facade\Request;
@@ -36,7 +38,7 @@ abstract class BaseController
      * 控制器中间件
      * @var array
      */
-    protected $middleware = [];
+    protected $middleware = [Auth::class, CheckLogin::class];
 
     /**
      * 构造方法

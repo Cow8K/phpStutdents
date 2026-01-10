@@ -123,7 +123,6 @@
         // 触发操作列按钮
         table.on('tool(studentList)', function (obj) {
             let data = obj.data;
-            console.log(data)
 
             if (obj.event === 'edit') {
                 form.val('studentForm', {
@@ -151,8 +150,13 @@
                         },
                         dataType: 'json',
                         success(res) {
-                            layer.msg(res['msg'], {icon: (res.code === SUCCESS_CODE ? SUCCESS : FAIL)});
-                            table.reload('studentList');
+                            if (res.code === SUCCESS_CODE) {
+                                layer.msg(res['msg'], {icon: SUCCESS});
+                                table.reload('studentList');
+                            }
+                            else {
+                                layer.msg(res['msg'], {icon: FAIL});
+                            }
                         }
                     });
                 });

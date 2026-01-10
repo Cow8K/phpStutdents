@@ -2,11 +2,12 @@
 
 namespace app\controller\api;
 
+use app\BaseController;
 use app\Request;
 use think\facade\Db;
 use app\common\Result;
 
-class ApiStuClazz
+class ApiStuClazz extends BaseController
 {
     public function addClazz(Request $req)
     {
