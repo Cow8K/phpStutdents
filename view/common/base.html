@@ -3,107 +3,121 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <title>{block name="title"}标题{/block}</title>
-    <style>
-        body {
-            background: #f5f5f5;
-            font-size: 13px;
-        }
-
-        ul, li {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .main-box {
-            width: 1200px;
-            display: flex;
-            justify-content: flex-start;
-            margin: 0 auto;
-        }
-
-        .side {
-            background: #fff;
-            padding: 15px;
-            border: 1px solid #ddd;
-            margin-right: 20px;
-            border-radius: 5px;
-        }
-
-        .side li {
-            margin: 10px 0;
-        }
-
-        .username {
-            font-size: 30px;
-            font-weight: bold;
-        }
-
-        .active {
-            font-weight: bold;
-        }
-    </style>
     <link href="/static/lib/layui/css/layui.css" rel="stylesheet">
-    <script src="/static/lib/layui/layui.js"></script>
 </head>
 <body>
-    <div class="container" style="margin-top: 20px;">
-        <div class="main-box">
-            <div class="side">
-                {block name="left"}
-                    <ul>
+    <div class="layui-layout layui-layout-admin">
+        <div class="layui-header">
+            <div class="layui-logo layui-hide-xs layui-bg-black">学生管理</div>
+            <ul class="layui-nav layui-layout-right">
+                <li class="layui-nav-item layui-hide layui-show-sm-inline-block">
+                    <a href="javascript:">
+                        <img src="//unpkg.com/outeres@0.0.10/img/layui/icon-v2.png" class="layui-nav-img" alt="avatar">
+                        {$username}
+                    </a>
+                    <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:0" class="href" id="modifyPassword">修改密码</a>
+                        </dd>
+                        <dd>
+                            <a href="/admin/logout" class="href">退出</a>
+                        </dd>
+                    </dl>
+                </li>
+                <li class="layui-nav-item" lay-header-event="menuRight" lay-unselect>
+                    <a href="javascript:">
+                        <i class="layui-icon layui-icon-more-vertical"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="layui-side layui-bg-black">
+            <div class="layui-side-scroll">
+                <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+                <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                    {block name="left"}
                         {foreach $menus as $path => $name}
-                        <li>
-                            <a href="{$path}" {$actionName == $path ? 'class="active"' : ''} >{$name}</a>
+                        <li class="layui-nav-item {$actionName == $path ? 'layui-this' : ''}">
+                            <a href="{$path}">{$name}</a>
                         </li>
                         {/foreach}
-                        <li>课程管理</li>
-                        <li>
-                            <a href="javascript:0" class="href" id="modifyPassword">修改密码</a>
-                        </li>
-                        <li>
-                            <a href="/admin/logout" class="href">退出</a>
-                        </li>
-                    </ul>
-                {/block}
-            </div>
-            <div class="con-box">
-                {block name="main"}主内容{/block}
+                        <li class="layui-nav-item"><a href="javascript:">课程管理</a></li>
+                        <li class="layui-nav-item"><a href="javascript:">成绩管理</a></li>
+                    {/block}
+                </ul>
             </div>
         </div>
+        <div class="layui-body">
+            <!-- 内容主体区域 -->
+            <div style="padding: 15px;">
+                <blockquote class="layui-elem-quote layui-text">
+                    Layui 框体布局内容主体区域
+                </blockquote>
+                <div class="layui-card layui-panel">
+                    {block name="main"}主内容{/block}
+                </div>
+            </div>
+        </div>
+
+        <div id="modify-password-box" style="display: none;">
+            <form class="layui-form" action="" lay-filter="modify-password-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">旧密码</label>
+                    <div class="layui-input-inline layui-input-wrap">
+                        <input type="text" name="oldPassword" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">新密码</label>
+                    <div class="layui-input-inline layui-input-wrap">
+                        <input type="text" name="newPassword" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">确认密码</label>
+                    <div class="layui-input-inline layui-input-wrap">
+                        <input type="text" name="confirmPassword" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button type="submit" class="layui-btn" lay-submit lay-filter="modifyPasswordBtn">确认修改</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
-    <div id="modify-password-box" style="display: none;">
-        <form class="layui-form" action="" lay-filter="modify-password-form">
-            <div class="layui-form-item">
-                <label class="layui-form-label">旧密码</label>
-                <div class="layui-input-inline layui-input-wrap">
-                    <input type="text" name="oldPassword" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
-                </div>
-            </div>
 
-            <div class="layui-form-item">
-                <label class="layui-form-label">新密码</label>
-                <div class="layui-input-inline layui-input-wrap">
-                    <input type="text" name="newPassword" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
-                </div>
-            </div>
+    <script src="/static/lib/layui/layui.js"></script>
+    <script>
+        layui.use(['element', 'layer', 'util'], function(){
+            let layer = layui.layer;
+            let util = layui.util;
 
-            <div class="layui-form-item">
-                <label class="layui-form-label">确认密码</label>
-                <div class="layui-input-inline layui-input-wrap">
-                    <input type="text" name="confirmPassword" lay-verify="required" autocomplete="off" lay-affix="clear" class="layui-input">
-                </div>
-            </div>
-
-            <div class="layui-form-item">
-                <div class="layui-input-block">
-                    <button type="submit" class="layui-btn" lay-submit lay-filter="modifyPasswordBtn">确认修改</button>
-                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
-                </div>
-            </div>
-        </form>
-    </div>
-
+            //头部事件
+            util.event('lay-header-event', {
+                menuLeft: function(){ // 左侧菜单事件
+                    layer.msg('展开左侧菜单的操作', {icon: 0});
+                },
+                menuRight: function(){  // 右侧菜单事件
+                    layer.open({
+                        type: 1,
+                        title: '更多',
+                        content: '<div style="padding: 15px;">处理右侧面板的操作</div>',
+                        area: ['260px', '100%'],
+                        offset: 'rt', // 右上角
+                        anim: 'slideLeft', // 从右侧抽屉滑出
+                        shadeClose: true,
+                        scrollbar: false
+                    });
+                }
+            });
+        });
+    </script>
     {block name="common_script"}
     <script>
         const FAIL = 2;

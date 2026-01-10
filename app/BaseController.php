@@ -6,6 +6,7 @@ namespace app;
 use app\middleware\Auth;
 use app\middleware\CheckLogin;
 use think\App;
+use think\facade\Session;
 use think\facade\View;
 use think\facade\Request;
 use think\exception\ValidateException;
@@ -57,21 +58,7 @@ abstract class BaseController
     // 初始化
     protected function initialize()
     {
-        $menus = [
-            "/admin/index" => "用户管理",
-            "/admin/adminManage" => "管理员管理",
-            "/stuClazz/clazzManage" => "班级管理",
-            "/student/studentManage" => "学生管理",
-        ];
-
-
-        $controllerShortName = substr(strrchr(Request::controller(), '.'), 1);
-        $actionName = '/' . lcfirst($controllerShortName) . '/' . Request::action();
-
-        View::assign([
-            'menus' => $menus,
-            'actionName' => $actionName,
-        ]);
+        $this->menuInit();
     }
 
     /**
@@ -111,4 +98,34 @@ abstract class BaseController
         return $v->failException(true)->check($data);
     }
 
+    private function menuInit()
+    {
+        $menus = [
+            "/admin/index" => "用户管理",
+            "/admin/adminManage" => "管理员管理",
+            "/stuClazz/clazzManage" => "班级管理",
+            "/student/studentManage" => "学生管理",
+        ];
+
+        $shortName = substr(strrchr(Request::controller(), '.'), 1);
+        $actionName = '/' . lcfirst($shortName) . '/' . Request::action();
+
+        $userInfo = Session::get('userInfo');
+        $groupId = $userInfo['groupId'];
+        $username = $userInfo['username'];
+
+        if ($groupId === 2) {
+            unset($menus['/admin/adminManage']);
+        }
+        elseif ($groupId === 3) {
+            unset($menus['/stuClazz/clazzManage']);
+        }
+
+
+        View::assign([
+            'menus' => $menus,
+            'username' => $username,
+            'actionName' => $actionName,
+        ]);
+    }
 }

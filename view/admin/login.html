@@ -39,24 +39,36 @@
     <script src="/static/lib/layui/layui.js"></script>
 </head>
 <body>
-<div>
-    <div class="con-box">
+
+    <div class="con-box" style="margin: 215px auto;">
         <h1 style="text-align: center; margin-bottom: 30px;">
             管理员登录
         </h1>
-        <form action="/api/admin/login" method="post">
-            <div class="line">
-                <span>账号：</span><input type="text" name="username">
+        <form class="layui-form" action="" lay-filter="modify-login-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">账号</label>
+                <div class="layui-input-inline layui-input-wrap">
+                    <input type="text" name="username" lay-verify="required"
+                           autocomplete="off" lay-affix="clear" class="layui-input" placeholder="请输入账号">
+                </div>
             </div>
-            <div class="line">
-                <span>密码：</span><input type="password" name="password">
+
+            <div class="layui-form-item">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-inline layui-input-wrap">
+                    <input type="password" name="password" lay-verify="required"
+                           autocomplete="off" lay-affix="clear" class="layui-input" placeholder="请输入密码">
+                </div>
             </div>
-            <br>
-            <div class="line">
-                <input type="submit" name="提交">
+
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <button type="submit" class="layui-btn" lay-submit lay-filter="loginBtn">登录</button>
+                </div>
             </div>
         </form>
     </div>
+
 
     <script>
         const FAIL = 2;
@@ -65,8 +77,10 @@
 
         layui.use('jquery', function (){
             let $ = layui.jquery;
+            let form = layui.form;
 
-            $("[type='submit']").click(function (){
+            // 提交表单
+            form.on('submit(loginBtn)', function(){
                 $.ajax({
                     type: 'post',
                     url: '/api/admin/login',
@@ -75,7 +89,6 @@
                         password: $("[name='password']").val(),
                     },
                     dataType: 'json',
-                    xhrFields: { withCredentials: true },
                     success(res) {
                         if (res.code === SUCCESS_CODE) {
                             layer.msg(res['msg'], {icon: SUCCESS});
@@ -86,7 +99,6 @@
                         }
                     }
                 });
-
                 return false;
             });
         });
