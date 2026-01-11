@@ -46,6 +46,7 @@ Route::group('api', function () {
     Route::post('admin/deleteAdmin', 'api.ApiAdmin/deleteAdmin');
     Route::post('admin/updateAdmin', 'api.ApiAdmin/updateAdmin');
     Route::post('admin/modifyPassword', 'api.ApiAdmin/modifyPassword');
+    Route::post('admin/uploadAvatar', 'api.ApiAdmin/uploadAvatar');
 
     Route::get('clazz/clazzList', 'api.ApiStuClazz/clazzList');
     Route::post('clazz/addClazz', 'api.ApiStuClazz/addClazz');

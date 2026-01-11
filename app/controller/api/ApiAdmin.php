@@ -49,6 +49,7 @@ class ApiAdmin extends BaseController
             'id' => $userId,
             'username' => $username,
             'groupId' => $user['group_id'],
+            'avatar' => $user['avatar']
         ]);
 
         // 登录成功
@@ -181,5 +182,36 @@ class ApiAdmin extends BaseController
         Session::set('userInfo', null);
 
         return Result::success(null,"修改密码成功");
+    }
+
+    public function uploadAvatar()
+    {
+        $file = $_FILES["file"];
+        if(!isset($file) || $file["error"] != 0){
+            return Result::error('头像上传异常');
+        }
+
+        // 类型
+        $allows = ["image/png","image/jpg","image/jpeg"];
+        if(!in_array($file["type"],$allows)){
+            return Result::error('格式不允许');
+        }
+
+        $userInfo = Session::get('userInfo');
+        $paths = 'uploads/'.$userInfo["id"].'/';
+        if(!file_exists($paths)){
+            mkdir($paths,0755,true);
+        }
+
+        $filepath = $paths.basename($file["name"]);
+        if(!move_uploaded_file($file["tmp_name"],$filepath)){
+            return Result::error('保存头像失败');
+        }
+
+        // 成功, 写入数据库
+        $filepath = '/' . $filepath;
+        Db::name('admin')->where('id',$userInfo["id"])->update(["avatar"=>$filepath]);
+
+        return Result::success(['avatar'=>$filepath], '上传成功');
     }
 }

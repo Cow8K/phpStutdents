@@ -111,6 +111,7 @@ abstract class BaseController
         $actionName = '/' . lcfirst($shortName) . '/' . Request::action();
 
         $userInfo = Session::get('userInfo');
+        $avatar = $userInfo['avatar'];
         $groupId = $userInfo['groupId'];
         $username = $userInfo['username'];
 
@@ -121,11 +122,11 @@ abstract class BaseController
             unset($menus['/stuClazz/clazzManage']);
         }
 
-
         View::assign([
             'menus' => $menus,
             'username' => $username,
             'actionName' => $actionName,
+            'avatar' => $avatar,
         ]);
     }
 }

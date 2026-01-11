@@ -12,10 +12,13 @@
             <ul class="layui-nav layui-layout-right">
                 <li class="layui-nav-item layui-hide layui-show-sm-inline-block">
                     <a href="javascript:">
-                        <img src="//unpkg.com/outeres@0.0.10/img/layui/icon-v2.png" class="layui-nav-img" alt="avatar">
+                        <img src="{$avatar|default='//unpkg.com/outeres@0.0.10/img/layui/icon-v2.png'}" class="layui-nav-img" alt="avatar" id="avatar">
                         {$username}
                     </a>
                     <dl class="layui-nav-child">
+                        <dd>
+                            <a href="javascript:0" class="href" id="uploadAvatar">上传头像</a>
+                        </dd>
                         <dd>
                             <a href="javascript:0" class="href" id="modifyPassword">修改密码</a>
                         </dd>
@@ -90,6 +93,20 @@
                 </div>
             </form>
         </div>
+        <div id="upload-avatar-box" style="display: none; padding-left: 75px;">
+            <button type="button" class="layui-btn" id="ID-upload-avatar-btn">
+                <i class="layui-icon layui-icon-upload"></i> 选择图片
+            </button>
+            <div style="width: 132px;">
+                <div class="layui-upload-list">
+                    <img class="layui-upload-img" id="ID-upload-avatar-img" style="width: 100%; height: 92px;">
+                    <div id="ID-upload-avatar-text"></div>
+                </div>
+                <div class="layui-progress layui-progress-big" lay-showPercent="yes" lay-filter="filter-avatar">
+                    <div class="layui-progress-bar" lay-percent=""></div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="/static/lib/layui/layui.js"></script>
@@ -127,6 +144,8 @@
         layui.use(function () {
             let $ = layui.jquery;
             let form = layui.form;
+            let upload = layui.upload;
+            let element = layui.element;
 
             // 自定义验证规则
             form.verify({
@@ -172,7 +191,8 @@
                 return false;
             });
 
-            $("[id='modifyPassword']").click(function () {
+            // 修改密码弹窗
+            $("#modifyPassword").click(function () {
                 layer.open({
                     type: 1,
                     area: ['400px', '350px'],
@@ -181,6 +201,60 @@
                     shadeClose: true,
                     content: $('#modify-password-box')
                 });
+            });
+
+            // 上传头像
+            $("#uploadAvatar").click(function () {
+                layer.open({
+                    type: 1,
+                    area: ['300px', '300px'],
+                    title: '头像上传',
+                    shade: 0.6,
+                    shadeClose: true,
+                    content: $('#upload-avatar-box')
+                });
+            });
+
+            let uploadInst = upload.render({
+                elem: '#ID-upload-avatar-btn',
+                url: '/api/admin/uploadAvatar',
+                before: function(obj){
+                    obj.preview(function(index, file, result){
+                        $('#ID-upload-avatar-img').attr('src', result);
+                    });
+
+                    // 进度条复位
+                    element.progress('filter-avatar', '0%');
+                    layer.msg('上传中', {icon: 16, time: 0});
+                },
+                done: function(res){
+                    // 若上传失败
+                    if(res.code !== 0){
+                        return layer.msg('上传失败');
+                    }
+
+                    layer.closeAll();
+                    $("#avatar").attr('src', res.data['avatar']);
+                    $("#ID-upload-avatar-img").attr('src', '');
+
+                    // 置空上传失败的状态
+                    $('#ID-upload-avatar-text').html('');
+                },
+                error: function(){
+                    // 演示失败状态，并实现重传
+                    let avatarText = $('#ID-upload-avatar-text');
+                    avatarText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs avatar-reload">重试</a>');
+                    avatarText.find('.avatar-reload').on('click', function(){
+                        uploadInst.upload();
+                    });
+                },
+                // 进度条
+                progress: function(n){
+                    element.progress('filter-avatar', n + '%');
+                    if(n === 100){
+                        layer.msg('上传完毕', {icon: 1});
+                    }
+                }
             });
         });
 
