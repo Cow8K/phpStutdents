@@ -70,4 +70,9 @@ Route::group('api', function () {
     Route::post('score/add', 'api.ApiScore/add');
     Route::post('score/delete', 'api.ApiScore/delete');
     Route::post('score/update', 'api.ApiScore/update');
+
+    Route::get('course/list', 'api.ApiCourse/list');
+    Route::post('course/add', 'api.ApiCourse/add');
+    Route::post('course/delete', 'api.ApiCourse/delete');
+    Route::post('course/update', 'api.ApiCourse/update');
 });

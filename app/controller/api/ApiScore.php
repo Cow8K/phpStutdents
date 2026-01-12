@@ -73,12 +73,12 @@ class ApiScore extends BaseController
             return Result::error('参数错误');
         }
 
-        $admin = Score::find($id);
-        if (!$admin) {
+        $score = Score::find($id);
+        if (!$score) {
             return Result::error('数据不存在');
         }
 
-        $admin->delete();
+        $score->delete();
 
         return Result::success(null, '删除成功');
     }
