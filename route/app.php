@@ -63,6 +63,7 @@ Route::group('api', function () {
 
     Route::get('student/studentList', 'api.ApiStudent/studentList');
     Route::post('student/addStudent', 'api.ApiStudent/addStudent');
+    Route::post('student/uploadExcel', 'api.ApiStudent/uploadExcel');
     Route::post('student/deleteStudent', 'api.ApiStudent/deleteStudent');
     Route::post('student/updateStudent', 'api.ApiStudent/updateStudent');
 

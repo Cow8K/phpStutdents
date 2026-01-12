@@ -7,6 +7,11 @@ use app\Request;
 use think\facade\Db;
 use app\common\Result;
 use app\model\Student;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\Reader\Xlsx;
+use PhpOffice\PhpSpreadsheet\Reader\Xls;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use Throwable;
 
 class ApiStudent extends BaseController
 {
@@ -94,4 +99,89 @@ class ApiStudent extends BaseController
         return Result::page($res->items(), $res->total());
     }
 
+    private function readExcel($file, $dateTitle = [])
+    {
+        try {
+            $allowType = [
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'application/vnd.ms-excel'
+            ];
+
+            if (!in_array($file["type"], $allowType)) {
+                return Result::error("格式不允许");
+            }
+
+            $filePath = $file["tmp_name"];
+            $reader = $file["type"] == $allowType[0] ? new Xlsx : new Xls;
+            $excel = $reader->load($filePath);
+            $sheet = $excel->getSheet(0);
+            $allRow = $sheet->getHighestRow();
+            $allColumn = $sheet->getHighestColumn();
+            $allColumnNumber = Coordinate::columnIndexFromString($allColumn);
+
+            $keys = [];
+            $dataIndex = [];
+            for ($i = 1; $i <= $allColumnNumber; $i++) {
+                $value = $sheet->getCellByColumnAndRow($i, 1)->getValue();
+                $keys[] = $value;
+
+                if (in_array($value, $dateTitle)) {
+                    $dataIndex[] = $i;
+                }
+
+            }
+
+            $data = [];
+            for ($j = 2; $j <= $allRow; $j++) {
+                $values = [];
+                for ($i = 1; $i <= $allColumnNumber; $i++) {
+                    $value = $sheet->getCellByColumnAndRow($i, $j)->getValue();
+                    if (in_array($i, $dataIndex)) {
+                        // 处理成日期格式
+                        $obj = Date::excelToDateTimeObject($value);
+                        $value = $obj->format('Y-m-d');
+                    }
+                    $values[] = $value;
+                }
+
+                $data[] = array_combine($keys, $values);
+            }
+
+            return $data;
+        } catch (Throwable $th) {
+            return Result::error('导入错误：' . $th->getMessage());
+        }
+    }
+
+    public function uploadExcel()
+    {
+        if (!isset($_FILES["file"]) || $_FILES["file"]["error"] != 0) {
+            return Result::error('未找到文件');
+        }
+
+        $saveData = [];
+        $file = $_FILES["file"];
+        $data = $this->readExcel($file, ["生日"]);
+
+        foreach ($data as $value) {
+            $saveData[] = [
+                "stu_number" => $value["学号"],
+                "name" => $value["姓名"],
+                "gender" => $value["性别"] == '男' ? 1 : 2,
+                "birthday" => $value["生日"],
+                "stu_class_id" => $value["班级ID"],
+            ];
+        }
+
+        try {
+            $result = Db::name('student')->insertAll($saveData);
+        } catch (Throwable $th) {
+            return Result::error('导入失败：' . $th->getMessage());
+        }
+
+        if ($result) {
+            return Result::success($result, '导入成功');
+        }
+        return Result::error('导入失败');
+    }
 }

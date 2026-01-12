@@ -4,6 +4,11 @@
 {block name="main"}
 <div style="padding: 15px;">
     <button id="addStudent" type="button" class="layui-btn layui-btn-sm layui-btn-normal" style="margin-bottom: 4px">添加学生</button>
+    <button type="button" class="layui-btn layui-btn-sm upload-file-class-accept"  style="margin-bottom: 4px"
+            lay-options="{accept: 'file', acceptMime: {application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel}, exts:{xlsx|xls}}">
+        <i class="layui-icon layui-icon-upload"></i>
+        导入学生
+    </button>
     <table class="layui-hide" id="studentList"></table>
 </div>
 <div id="addBox" class="add-box" style="display: none;">
@@ -81,6 +86,8 @@
         let $ = layui.jquery;
         let form = layui.form;
         let table = layui.table;
+        let layer = layui.layer;
+        let upload = layui.upload;
         let laydate = layui.laydate;
 
         // 创建渲染实例
@@ -206,6 +213,23 @@
             });
 
             return false;
+        });
+
+        // 渲染
+        upload.render({
+            elem: '.upload-file-class-accept',
+            url: '/api/student/uploadExcel',
+            accept: 'file',
+            done: function(res){
+                console.log(res)
+                if (res.code === 0) {
+                    layer.msg(res['msg'], {icon: SUCCESS});
+                    layer.closeAll();
+                    table.reload('studentList');
+                    return;
+                }
+                layer.msg(res['msg'], {icon: FAIL});
+            }
         });
     });
 </script>
