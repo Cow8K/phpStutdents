@@ -84,13 +84,32 @@ class ApiStudent extends BaseController
 
     public function studentList()
     {
+
+        $where = [];
         $page = input("page", 1);
         $limit = input("limit", 10);
+        $whereArr = $this->request->param('where/a', []);
+
+        if (!empty($whereArr)) {
+            if (!empty($whereArr["name"])) {
+                $where[] = ["stu.name", 'like', '%' . $whereArr["name"] . '%'];
+            }
+
+            if (!empty($whereArr["stu_number"])) {
+                $where[] = ["stu.stu_number", 'like', '%' . $whereArr["stu_number"] . '%'];
+            }
+
+            if (!empty($whereArr["gender"])) {
+                $where[] = ["stu.gender", '=', $whereArr["gender"]];
+            }
+
+        }
 
         $res = Student::alias('stu')
             ->leftJoin('stu_class sc', 'stu.stu_class_id = sc.id')
             ->order('stu.id', 'desc')
             ->field('stu.*, sc.grade, sc.title')
+            ->where($where)
             ->paginate([
                 "list_rows" => $limit,
                 "page"      => $page,

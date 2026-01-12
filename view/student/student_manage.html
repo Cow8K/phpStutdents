@@ -2,6 +2,36 @@
 {block name="title"}{$title}{/block}
 
 {block name="main"}
+<div style="padding: 16px;">
+    <div class="search-box">
+        <form class="layui-form" action="" lay-filter="search-form">
+            <div class="layui-form-item">
+                <label class="layui-form-label">学号</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="stu_number" value="" placeholder="请输入学号" autocomplete="off" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">姓名</label>
+                <div class="layui-input-inline">
+                    <input type="text" name="name" value="" placeholder="请输入姓名" autocomplete="off" class="layui-input">
+                </div>
+
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-inline">
+                    <select name="gender">
+                        <option value="">请选择</option>
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </select>
+                </div>
+
+                <div class="layui-input-inline">
+                    <button class="layui-btn" lay-submit lay-filter="form-search">搜索</button>
+                    <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                </div>
+            </div>
+        </form>
+    </div>
 <div style="padding: 15px;">
     <button id="addStudent" type="button" class="layui-btn layui-btn-sm layui-btn-normal" style="margin-bottom: 4px">添加学生</button>
     <button type="button" class="layui-btn layui-btn-sm upload-file-class-accept"  style="margin-bottom: 4px"
@@ -230,6 +260,19 @@
                 }
                 layer.msg(res['msg'], {icon: FAIL});
             }
+        });
+
+        form.on('submit(form-search)', function(data){
+
+            table.reload('studentList', {
+                page: {
+                    curr: 1
+                },
+                where: {
+                    where:data.field
+                }
+            });
+            return false
         });
     });
 </script>
