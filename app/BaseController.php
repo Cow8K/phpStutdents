@@ -105,6 +105,8 @@ abstract class BaseController
             "/admin/adminManage" => "管理员管理",
             "/stuClazz/clazzManage" => "班级管理",
             "/student/studentManage" => "学生管理",
+            "/score/scoreManage" => "成绩管理",
+            "/course/courseManage" => "课程管理",
         ];
 
         $shortName = substr(strrchr(Request::controller(), '.'), 1);

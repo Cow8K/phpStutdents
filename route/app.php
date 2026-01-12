@@ -36,6 +36,14 @@ Route::group('student', function () {
     Route::get('studentManage', 'web.Student/studentManage');
 });
 
+Route::group('score', function () {
+    Route::get('scoreManage', 'web.Score/scoreManage');
+});
+
+Route::group('course', function () {
+    Route::get('courseManage', 'web.Course/courseManage');
+});
+
 /**
  * 接口
  */
@@ -57,4 +65,9 @@ Route::group('api', function () {
     Route::post('student/addStudent', 'api.ApiStudent/addStudent');
     Route::post('student/deleteStudent', 'api.ApiStudent/deleteStudent');
     Route::post('student/updateStudent', 'api.ApiStudent/updateStudent');
+
+    Route::get('score/list', 'api.ApiScore/list');
+    Route::post('score/add', 'api.ApiScore/add');
+    Route::post('score/delete', 'api.ApiScore/delete');
+    Route::post('score/update', 'api.ApiScore/update');
 });
