@@ -101,7 +101,7 @@ abstract class BaseController
     private function menuInit()
     {
         $menus = [
-            "/admin/index" => "用户管理",
+            "/admin/index" => "首页",
             "/admin/adminManage" => "管理员管理",
             "/stuClazz/clazzManage" => "班级管理",
             "/student/studentManage" => "学生管理",

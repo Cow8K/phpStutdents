@@ -4,8 +4,69 @@
 {block name="main"}
     <div class="userinfo">
         <div class="username">
-            {$userInfo.username}
+            <h1 style="padding-left: 15px">
+                {$userInfo.username}
+            </h1>
+        </div>
+
+        <div class="layui-bg-gray" style="padding: 16px;">
+            <div class="layui-row layui-col-space15">
+                {foreach $data as $value}
+                <div class="layui-col-md6">
+                    <div class="layui-card">
+                        <div class="layui-card-header">
+                            <h2>
+                                {$value.title}
+                                <span class="layui-badge layui-bg-orange">{$value.count}</span>
+                            </h2>
+                        </div>
+                        <div class="layui-card-body">
+                            {foreach $value.children as $child}
+                                {foreach $child as $list}
+                                <button type="button" class="layui-btn layui-btn-sm">
+                                    {$list.grade} {$list.title ?? ''} <span class="layui-badge-rim">{$list.count}</span>
+                                </button>
+                                {/foreach}
+                            <br>
+                            <br>
+                            {/foreach}
+                        </div>
+                    </div>
+                </div>
+                {/foreach}
+
+            </div>
+            <div class="layui-row layui-col-space15">
+                <h2>
+                    各科成绩统计
+                </h2>
+                <table class="layui-hide" id="table-data"></table>
+            </div>
         </div>
     </div>
 {/block}
+
+{block name="javascript"}
+<script>
+    layui.use('table', function(){
+
+        // 已知数据渲染
+        layui.table.render({
+                elem: '#table-data',
+                cols: [[ //标题栏
+
+                    {field: 'grade', title: '年级', width: 160},
+                    {field: 'class', title: '班级', width: 120},
+                    {field: 'title', title: '科目', width: 100},
+                    {field: 'max', title: '最高分', width: 100,sort: true},
+                    {field: 'min', title: '最低分', width: 100, sort: true},
+                    {field: 'avg', title: '平均分', width: 100, sort: true},
+                ]],
+                data: {$scoreInfo|raw},
+            page: false
+    });
+    });
+</script>
+{/block}
+{block name="common-javascript"}{/block}
 
